@@ -1,0 +1,37 @@
+Community Meeting Transcript - June 15, 2024
+
+MODERATOR: Welcome everyone to our monthly community governance meeting. Today we'll be discussing some important updates about our platform's growth and community initiatives.
+
+ALEX (Community Lead): Thanks for joining everyone. First, I'd like to share that our community has grown by 25% since our last meeting. We now have over 10,000 active members!
+
+TAYLOR (Product Manager): That's incredible growth. I think our new onboarding process has really helped with retention.
+
+ALEX: Absolutely. Our governance working group has also made progress on the new decision-making framework. We've incorporated feedback from community members and have a draft ready for review.
+
+JAMIE (Developer): The technical committee has approved the new contribution guidelines. This should make it easier for new contributors to get involved.
+
+MORGAN (Finance): We've allocated $50,000 from our community treasury for the developer grants program. Applications will open next week.
+
+ALEX: Great news! Speaking of community initiatives, our mentorship program has paired 50 mentors with newcomers. The feedback has been overwhelmingly positive.
+
+TAYLOR: The product roadmap for Q3 includes more community-driven features based on the recent survey results. The top request was for improved collaboration tools.
+
+JORDAN (Marketing): Our social media presence has doubled in engagement. The community spotlight series featuring member projects has been particularly successful.
+
+ALEX: I'm also excited to announce our upcoming virtual community conference scheduled for August. We'll have workshops, panels, and networking opportunities.
+
+MODERATOR: These are all fantastic updates. Let's open the floor for questions and feedback.
+
+COMMUNITY MEMBER 1: How can regular members get involved in the governance working group?
+
+ALEX: Great question! We have open meetings every Wednesday at 3 PM UTC. Anyone can join and contribute ideas. We also have a dedicated channel on Discord.
+
+COMMUNITY MEMBER 2: Will the developer grants program prioritize certain types of projects?
+
+MORGAN: We're particularly interested in projects that enhance community tools, improve accessibility, and strengthen security. But all innovative ideas will be considered.
+
+ALEX: To add to that, we've created a transparent review process with community representatives on the selection committee.
+
+MODERATOR: Thank you everyone for your participation. Our next community governance meeting will be on July 15th. The meeting notes and recording will be shared within 48 hours.
+
+[Meeting adjourned] 

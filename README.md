@@ -20,6 +20,11 @@ This application is built with these principles in mind:
 - Process meeting transcripts to extract important segments
 - Generate tweet suggestions using Anthropic Claude
 - Review generated tweets by category
+- Complete tweet lifecycle management:
+  - Edit tweet content
+  - Send tweets (simulated)
+  - Delete draft tweets
+  - Visual state indicators (draft, approved, edited, sent)
 - Simple local storage without requiring a database
 - Basic authentication with configurable admin credentials
 - Modern, responsive UI with copy-to-clipboard functionality for tweets
@@ -32,7 +37,13 @@ dao-tweet-generator/
 │   ├── src/
 │   │   ├── config/         # Configuration and environment settings
 │   │   ├── services/       # Core business logic
+│   │   │   ├── authService.ts       # Authentication service
+│   │   │   ├── transcriptService.ts # Transcript processing
+│   │   │   └── tweetService.ts      # Tweet management
 │   │   ├── routes/         # API endpoints
+│   │   │   ├── auth.ts            # Authentication routes
+│   │   │   ├── transcripts.ts     # Transcript management routes
+│   │   │   └── tweets.ts          # Tweet lifecycle routes
 │   │   ├── types.ts        # Type definitions
 │   │   └── server.ts       # Entry point
 │   ├── data/               # Local storage directory
@@ -41,7 +52,12 @@ dao-tweet-generator/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/     # UI components
+│   │   │   ├── Dashboard.tsx       # Main dashboard
+│   │   │   ├── TweetList.tsx       # Tweet display component
+│   │   │   ├── TweetEditor.tsx     # Tweet editing modal
+│   │   │   └── ...                 # Other components
 │   │   ├── context/        # State management
+│   │   │   └── AppContext.tsx      # Application state and actions
 │   │   ├── services/       # API client
 │   │   ├── types.ts        # Type definitions
 │   │   ├── App.tsx         # Main component
@@ -132,7 +148,16 @@ dao-tweet-generator/
 
 7. Tweets will be organized by category (Governance, Treasury, Community, etc.)
 
-8. Use the "Copy to Clipboard" button to copy any tweet that you want to use.
+8. For each tweet, you can:
+   - **Copy to Clipboard**: Quickly copy the tweet text
+   - **Edit**: Modify the tweet content (opens the editor)
+   - **Send**: Mark the tweet as sent (simulated)
+   - **Delete**: Remove draft tweets from the list
+
+9. Tweet states are color-coded for easy identification:
+   - **Draft**: Default state for newly generated tweets
+   - **Edited**: Tweets that have been modified
+   - **Sent**: Tweets that have been marked as sent
 
 ## Understanding The Architecture
 
@@ -156,6 +181,8 @@ This application follows a clean architecture approach:
 3. Backend processes transcript with Claude API in the background
 4. Generated tweets are stored in the local file system
 5. Frontend fetches and displays the generated tweets
+6. User can edit, send, or delete tweets as needed
+7. State changes are persisted to the backend
 
 ## Customizing the Tweet Generation
 

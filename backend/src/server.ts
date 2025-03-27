@@ -5,6 +5,7 @@ import path from 'path';
 import { config } from './config/config';
 import authRoutes from './routes/auth';
 import transcriptRoutes from './routes/transcripts';
+import tweetRoutes from './routes/tweets'; // Add the new tweet routes
 
 // Initialize Express app
 const app = express();
@@ -21,6 +22,7 @@ if (config.nodeEnv === 'production') {
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transcripts', transcriptRoutes);
+app.use('/api/tweets', tweetRoutes); // Add the new tweet routes
 
 // Health check route
 app.get('/health', (req, res) => {

@@ -99,8 +99,8 @@ export const getTweetsByTranscriptId = async (transcriptId: string): Promise<Twe
   return tweets.filter(tweet => tweet.transcriptId === transcriptId);
 };
 
-// Create a tweet
-export const createTweet = async (data: Omit<Tweet, 'id' | 'createdAt'>): Promise<Tweet> => {
+// Create a tweet - Updated version with state
+export const createTweet = async (data: Omit<Tweet, 'id' | 'createdAt' | 'state'>): Promise<Tweet> => {
   const tweets = await getTweets();
   
   const newTweet: Tweet = {
@@ -108,6 +108,7 @@ export const createTweet = async (data: Omit<Tweet, 'id' | 'createdAt'>): Promis
     transcriptId: data.transcriptId,
     category: data.category,
     content: data.content,
+    state: 'draft', // Default state is 'draft'
     createdAt: new Date().toISOString()
   };
   
@@ -117,7 +118,7 @@ export const createTweet = async (data: Omit<Tweet, 'id' | 'createdAt'>): Promis
   return newTweet;
 };
 
-// Generate tweets from transcript
+// Generate tweets from transcript - Modified to include state
 export const generateTweets = async (transcript: string, transcriptId: string): Promise<Tweet[]> => {
   const systemPrompt = `You are an expert at converting DAO governance meeting transcripts into engaging tweet suggestions.
 Your task is to analyze the provided meeting transcript and generate tweet suggestions for the DAO to share with the community.
@@ -190,6 +191,7 @@ DO NOT include any explanations or commentary. Return ONLY valid JSON.`;
       transcriptId,
       category: tweetData.category,
       content: tweetData.content,
+      state: 'draft', // Set default state to 'draft'
       createdAt: new Date().toISOString()
     }));
     

@@ -30,13 +30,23 @@ export interface AuthRequest {
     content: string;
   }
   
+  // Tweet state type
+  export type TweetState = 'draft' | 'approved' | 'edited' | 'sent';
+  
   // Tweet entity
   export interface Tweet {
     id: string;
     transcriptId: string;
     category: string;
     content: string;
+    state: TweetState;
     createdAt: string;
+    updatedAt?: string;
+  }
+  
+  // Request for updating a tweet
+  export interface TweetUpdateRequest {
+    content: string;
   }
   
   // Custom error type for API errors

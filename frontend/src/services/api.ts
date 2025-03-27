@@ -1,5 +1,6 @@
 // src/services/api.ts
 import axios from 'axios';
+import { TweetUpdateRequest } from '../types';
 
 // Create axios instance with base URL
 const api = axios.create({
@@ -72,5 +73,21 @@ export const getTranscriptTweets = async (id: string) => {
 
 export const getSampleTranscript = async () => {
   const response = await api.get('/transcripts/sample/transcript');
+  return response.data;
+};
+
+// New Tweet API endpoints
+export const editTweet = async (id: string, data: TweetUpdateRequest) => {
+  const response = await api.put(`/tweets/${id}/edit`, data);
+  return response.data;
+};
+
+export const sendTweet = async (id: string) => {
+  const response = await api.post(`/tweets/${id}/send`);
+  return response.data;
+};
+
+export const deleteTweet = async (id: string) => {
+  const response = await api.delete(`/tweets/${id}`);
   return response.data;
 };

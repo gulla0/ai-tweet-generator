@@ -33,7 +33,9 @@ type AppAction =
   | { type: 'SET_TRANSCRIPTS', payload: Transcript[] }
   | { type: 'SET_SELECTED_TRANSCRIPT', payload: Transcript | null }
   | { type: 'SET_TWEETS', payload: Tweet[] }
-  | { type: 'SET_VIEW', payload: 'list' | 'form' | 'tweets' };
+  | { type: 'SET_VIEW', payload: 'list' | 'form' | 'tweets' }
+  | { type: 'UPDATE_TWEET', payload: Tweet }
+  | { type: 'REMOVE_TWEET', payload: string };
 
 // Reducer function
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -52,6 +54,18 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
       return { ...state, tweets: action.payload };
     case 'SET_VIEW':
       return { ...state, view: action.payload };
+    case 'UPDATE_TWEET':
+      return {
+        ...state,
+        tweets: state.tweets.map(tweet => 
+          tweet.id === action.payload.id ? action.payload : tweet
+        )
+      };
+    case 'REMOVE_TWEET':
+      return {
+        ...state,
+        tweets: state.tweets.filter(tweet => tweet.id !== action.payload)
+      };
     default:
       return state;
   }
@@ -68,6 +82,9 @@ interface AppContextType {
   fetchTweets: (transcriptId: string) => Promise<void>;
   getSampleTranscript: () => Promise<string>;
   setView: (view: 'list' | 'form' | 'tweets') => void;
+  sendTweet: (tweetId: string) => Promise<void>;
+  editTweet: (tweetId: string, content: string) => Promise<void>;
+  deleteTweet: (tweetId: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -184,6 +201,54 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dispatch({ type: 'SET_VIEW', payload: view });
   };
 
+  // Send tweet
+  const sendTweet = async (tweetId: string) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+    
+    try {
+      const response = await api.sendTweet(tweetId);
+      dispatch({ type: 'UPDATE_TWEET', payload: response.tweet });
+    } catch (error: any) {
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to send tweet' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Edit tweet
+  const editTweet = async (tweetId: string, content: string) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+    
+    try {
+      const response = await api.editTweet(tweetId, { content });
+      dispatch({ type: 'UPDATE_TWEET', payload: response.tweet });
+    } catch (error: any) {
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to edit tweet' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Delete tweet
+  const deleteTweet = async (tweetId: string) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+    
+    try {
+      await api.deleteTweet(tweetId);
+      dispatch({ type: 'REMOVE_TWEET', payload: tweetId });
+    } catch (error: any) {
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to delete tweet' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const value = {
     state,
     login,
@@ -194,6 +259,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     fetchTweets,
     getSampleTranscript,
     setView,
+    sendTweet,
+    editTweet,
+    deleteTweet
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

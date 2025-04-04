@@ -1,6 +1,8 @@
 // src/components/Header.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { XCredentialStatus } from './XCredentialStatus';
+import { XCredentialModal } from './XCredentialModal';
 
 // Styled components
 const HeaderContainer = styled.header`
@@ -24,7 +26,13 @@ const Logo = styled.h1`
   margin: 0;
 `;
 
-const LogoutButton = styled.button`
+const RightSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+const ResetButton = styled.button`
   background: none;
   border: 1px solid white;
   color: white;
@@ -40,17 +48,26 @@ const LogoutButton = styled.button`
 
 // Header props
 interface HeaderProps {
-  onLogout: () => void;
+  onReset: () => void;
 }
 
 // Header component
-const Header = ({ onLogout }: HeaderProps) => {
+const Header = ({ onReset }: HeaderProps) => {
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
   return (
     <HeaderContainer>
       <HeaderContent>
         <Logo>DAO Tweet Generator</Logo>
-        <LogoutButton onClick={onLogout}>Logout</LogoutButton>
+        <RightSection>
+          <XCredentialStatus onOpenSettings={() => setIsSettingsOpen(true)} />
+          <ResetButton onClick={onReset} title="Reset app and start over">Reset</ResetButton>
+        </RightSection>
       </HeaderContent>
+      <XCredentialModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+      />
     </HeaderContainer>
   );
 };

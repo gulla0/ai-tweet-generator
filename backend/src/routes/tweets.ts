@@ -1,18 +1,16 @@
 // src/routes/tweets.ts
 import express from 'express';
-import { authMiddleware } from '../services/authService';
 import {
   getTweetById,
   editTweet,
   sendTweet,
-  deleteTweet
+  deleteTweet,
+  sendToX,
+  validateXCredentials
 } from '../services/tweetService';
-import { TweetUpdateRequest } from '../types';
+import { TweetUpdateRequest, XCredentialType } from '../types';
 
 const router = express.Router();
-
-// Apply auth middleware to all routes
-router.use(authMiddleware as express.RequestHandler);
 
 /**
  * PUT /api/tweets/:id/edit
@@ -132,6 +130,94 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to delete tweet'
+    });
+  }
+});
+
+/**
+ * POST /api/tweets/send-to-x/:id
+ * Send a tweet to X using provided credentials
+ */
+router.post('/send-to-x/:id', async (req, res) => {
+  try {
+    const tweetId = req.params.id;
+    const { apiKey, apiSecret, accessToken, accessSecret } = req.body as XCredentialType;
+    
+    // Validate X credentials
+    if (!apiKey || !apiSecret || !accessToken || !accessSecret) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing X API credentials'
+      });
+    }
+    
+    const tweet = await getTweetById(tweetId);
+    if (!tweet) {
+      return res.status(404).json({
+        success: false,
+        message: 'Tweet not found'
+      });
+    }
+    
+    if (tweet.state === 'sent') {
+      return res.status(400).json({
+        success: false,
+        message: 'Tweet has already been sent'
+      });
+    }
+    
+    const updatedTweet = await sendToX(tweetId, {
+      apiKey,
+      apiSecret,
+      accessToken,
+      accessSecret
+    });
+    
+    res.json({
+      success: true,
+      tweet: updatedTweet
+    });
+  } catch (error: any) {
+    console.error('Error sending tweet to X:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to send tweet to X'
+    });
+  }
+});
+
+/**
+ * POST /api/tweets/validate-x-creds
+ * Validate X credentials
+ */
+router.post('/validate-x-creds', async (req, res) => {
+  try {
+    const { apiKey, apiSecret, accessToken, accessSecret } = req.body as XCredentialType;
+    
+    // Validate X credentials
+    if (!apiKey || !apiSecret || !accessToken || !accessSecret) {
+      return res.status(400).json({
+        success: false,
+        message: 'Missing X API credentials'
+      });
+    }
+    
+    const isValid = await validateXCredentials({
+      apiKey,
+      apiSecret,
+      accessToken,
+      accessSecret
+    });
+    
+    res.json({
+      success: true,
+      isValid
+    });
+  } catch (error: any) {
+    console.error('Error validating X credentials:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message || 'Failed to validate X credentials'
     });
   }
 });

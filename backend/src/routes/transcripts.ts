@@ -1,6 +1,5 @@
 // src/routes/transcripts.ts
 import express from 'express';
-import { authMiddleware } from '../services/authService';
 import { 
   getTranscripts, 
   getTranscriptById, 
@@ -12,9 +11,6 @@ import {
 import { TranscriptRequest } from '../types';
 
 const router = express.Router();
-
-// Apply auth middleware to all routes
-router.use(authMiddleware as express.RequestHandler);
 
 /**
  * GET /api/transcripts

@@ -1,6 +1,6 @@
 // src/context/AppContext.tsx
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { Transcript, Tweet } from '../types';
+import { Transcript, Tweet, XCredentialType } from '../types';
 import * as api from '../services/api';
 
 // State type
@@ -12,6 +12,8 @@ interface AppState {
   selectedTranscript: Transcript | null;
   tweets: Tweet[];
   view: 'list' | 'form' | 'tweets';
+  xCredentials: XCredentialType | null;
+  xCredentialsValid: boolean | null;
 }
 
 // Initial state
@@ -23,6 +25,8 @@ const initialState: AppState = {
   selectedTranscript: null,
   tweets: [],
   view: 'list',
+  xCredentials: null,
+  xCredentialsValid: null,
 };
 
 // Action types
@@ -35,7 +39,9 @@ type AppAction =
   | { type: 'SET_TWEETS', payload: Tweet[] }
   | { type: 'SET_VIEW', payload: 'list' | 'form' | 'tweets' }
   | { type: 'UPDATE_TWEET', payload: Tweet }
-  | { type: 'REMOVE_TWEET', payload: string };
+  | { type: 'REMOVE_TWEET', payload: string }
+  | { type: 'SET_X_CREDENTIALS', payload: XCredentialType | null }
+  | { type: 'SET_X_CREDENTIALS_VALID', payload: boolean | null };
 
 // Reducer function
 const appReducer = (state: AppState, action: AppAction): AppState => {
@@ -66,6 +72,10 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         ...state,
         tweets: state.tweets.filter(tweet => tweet.id !== action.payload)
       };
+    case 'SET_X_CREDENTIALS':
+      return { ...state, xCredentials: action.payload, xCredentialsValid: null };
+    case 'SET_X_CREDENTIALS_VALID':
+      return { ...state, xCredentialsValid: action.payload };
     default:
       return state;
   }
@@ -74,8 +84,8 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
 // Create context
 interface AppContextType {
   state: AppState;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  enterApp: (xCredentials?: XCredentialType) => Promise<void>;
+  exitApp: () => void;
   fetchTranscripts: () => Promise<void>;
   createTranscript: (transcript: { title: string; date: string; content: string }) => Promise<void>;
   selectTranscript: (transcript: Transcript) => Promise<void>;
@@ -85,6 +95,8 @@ interface AppContextType {
   sendTweet: (tweetId: string) => Promise<void>;
   editTweet: (tweetId: string, content: string) => Promise<void>;
   deleteTweet: (tweetId: string) => Promise<void>;
+  validateXCredentials: (creds: XCredentialType) => Promise<boolean>;
+  updateXCredentials: (creds: XCredentialType) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -93,40 +105,72 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Check auth status on mount
+  // Check if user was previously in the app
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const hasUsedAppBefore = localStorage.getItem('hasUsedAppBefore');
+    if (hasUsedAppBefore === 'true') {
       dispatch({ type: 'SET_AUTHENTICATED', payload: true });
+      
+      // Try to restore X credentials if they exist
+      try {
+        const savedXCreds = localStorage.getItem('xCredentials');
+        if (savedXCreds) {
+          const creds = JSON.parse(savedXCreds) as XCredentialType;
+          dispatch({ type: 'SET_X_CREDENTIALS', payload: creds });
+          validateXCredentials(creds).catch(console.error);
+        }
+      } catch (error) {
+        console.error('Failed to restore X credentials:', error);
+      }
     }
   }, []);
 
-  // Login
-  const login = async (email: string, password: string) => {
+  // Enter the app
+  const enterApp = async (xCredentials?: XCredentialType) => {
     dispatch({ type: 'SET_LOADING', payload: true });
     dispatch({ type: 'SET_ERROR', payload: null });
     
     try {
-      const response = await api.login(email, password);
+      // Mark that the user has used the app before
+      localStorage.setItem('hasUsedAppBefore', 'true');
       
-      if (response.success && response.token) {
-        localStorage.setItem('token', response.token);
-        dispatch({ type: 'SET_AUTHENTICATED', payload: true });
-      } else {
-        throw new Error(response.message || 'Authentication failed');
+      // Set authenticated state
+      dispatch({ type: 'SET_AUTHENTICATED', payload: true });
+      
+      // If X credentials were provided, save and validate them
+      if (xCredentials && 
+          xCredentials.apiKey && 
+          xCredentials.apiSecret && 
+          xCredentials.accessToken && 
+          xCredentials.accessSecret) {
+        // Save credentials
+        dispatch({ type: 'SET_X_CREDENTIALS', payload: xCredentials });
+        localStorage.setItem('xCredentials', JSON.stringify(xCredentials));
+        
+        // Validate them
+        try {
+          await validateXCredentials(xCredentials);
+        } catch (error) {
+          console.error('Failed to validate X credentials:', error);
+          // Don't throw the error, just set the validation state to false
+          dispatch({ type: 'SET_X_CREDENTIALS_VALID', payload: false });
+        }
       }
     } catch (error: any) {
-      dispatch({ type: 'SET_ERROR', payload: error.message || 'Login failed' });
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to enter app' });
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
 
-  // Logout
-  const logout = () => {
-    localStorage.removeItem('token');
+  // Exit app (formerly logout)
+  const exitApp = () => {
+    localStorage.removeItem('hasUsedAppBefore');
+    localStorage.removeItem('xCredentials');
     dispatch({ type: 'SET_AUTHENTICATED', payload: false });
+    dispatch({ type: 'SET_X_CREDENTIALS', payload: null });
+    dispatch({ type: 'SET_X_CREDENTIALS_VALID', payload: null });
   };
 
   // Fetch transcripts
@@ -207,7 +251,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dispatch({ type: 'SET_ERROR', payload: null });
     
     try {
-      const response = await api.sendTweet(tweetId);
+      let response;
+      
+      // Only try to send to X if credentials are valid
+      if (state.xCredentials && state.xCredentialsValid) {
+        try {
+          response = await api.sendTweetToX(tweetId, state.xCredentials);
+        } catch (error) {
+          console.error('Error sending to X, falling back to simulation:', error);
+          // If X sending fails for any reason, fall back to simulation
+          response = await api.sendTweet(tweetId);
+        }
+      } else {
+        // No valid credentials, just simulate
+        response = await api.sendTweet(tweetId);
+      }
+      
       dispatch({ type: 'UPDATE_TWEET', payload: response.tweet });
     } catch (error: any) {
       dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to send tweet' });
@@ -249,10 +308,56 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  // Validate X credentials
+  const validateXCredentials = async (creds: XCredentialType) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+    
+    try {
+      const response = await api.validateXCreds(creds);
+      dispatch({ type: 'SET_X_CREDENTIALS_VALID', payload: response.isValid });
+      return response.isValid;
+    } catch (error: any) {
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to validate X credentials' });
+      dispatch({ type: 'SET_X_CREDENTIALS_VALID', payload: false });
+      return false;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
+  // Update X credentials
+  const updateXCredentials = async (creds: XCredentialType) => {
+    dispatch({ type: 'SET_LOADING', payload: true });
+    dispatch({ type: 'SET_ERROR', payload: null });
+    
+    try {
+      // Set credentials first so validation has the updated values
+      dispatch({ type: 'SET_X_CREDENTIALS', payload: creds });
+      
+      // Then validate them
+      const isValid = await validateXCredentials(creds);
+      
+      // If they're invalid, show a specific message but don't throw an error
+      // This allows setting credentials even if they're invalid
+      if (!isValid) {
+        dispatch({ 
+          type: 'SET_ERROR', 
+          payload: 'X credentials were saved but are invalid. Tweets will be simulated.' 
+        });
+      }
+    } catch (error: any) {
+      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to update X credentials' });
+      throw error;
+    } finally {
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  };
+
   const value = {
     state,
-    login,
-    logout,
+    enterApp,
+    exitApp,
     fetchTranscripts,
     createTranscript,
     selectTranscript,
@@ -261,7 +366,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setView,
     sendTweet,
     editTweet,
-    deleteTweet
+    deleteTweet,
+    validateXCredentials,
+    updateXCredentials
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

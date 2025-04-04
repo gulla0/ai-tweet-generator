@@ -5,8 +5,8 @@
     "category": "Governance",
     "content": "📢XXX Gimbal Labs discusses treasury governance: We abstained on the DRep vote to decrease treasury tax, highlighting the importance of sustainable funding for community projects. #DAOGovernance #Web3",
     "createdAt": "2025-03-26T03:13:34.085Z",
-    "state": "edited",
-    "updatedAt": "2025-03-27T04:46:38.553Z"
+    "state": "sent",
+    "updatedAt": "2025-04-04T16:37:05.045Z"
   },
   {
     "id": "4327e323-cbac-44d9-9c3a-a915d6d868b4",
@@ -22,7 +22,9 @@
     "transcriptId": "aa387a48-343a-44d5-b67c-c72fb57eb4c9",
     "category": "Education",
     "content": "🚀 Big news! We're exploring a Front-End Developer Collective as our first step towards becoming a project incubator and accelerator. Supporting Cardano ecosystem talent! #CardanoDev #TechIncubator",
-    "createdAt": "2025-03-26T03:13:34.085Z"
+    "createdAt": "2025-03-26T03:13:34.085Z",
+    "state": "sent",
+    "updatedAt": "2025-04-04T05:35:33.586Z"
   },
   {
     "id": "c01245f9-d402-40bf-a169-5d944c5496e0",

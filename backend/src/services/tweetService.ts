@@ -1,8 +1,9 @@
 // src/services/tweetService.ts
 import fs from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
+import { TwitterApi } from 'twitter-api-v2';
 import { config } from '../config/config';
-import { Tweet, TweetState, TweetUpdateRequest } from '../types';
+import { Tweet, TweetState, TweetUpdateRequest, XCredentialType } from '../types';
 
 const TWEETS_FILE = config.paths.tweets;
 
@@ -145,4 +146,59 @@ export const deleteTweet = async (id: string): Promise<boolean> => {
   
   await saveTweets(filteredTweets);
   return true;
+};
+
+export const sendToX = async (id: string, creds: XCredentialType): Promise<Tweet | null> => {
+  const tweets = await getTweets();
+  const tweetIndex = tweets.findIndex(tweet => tweet.id === id);
+  
+  if (tweetIndex === -1) {
+    return null;
+  }
+  
+  try {
+    // Create Twitter client with provided credentials
+    const client = new TwitterApi({
+      appKey: creds.apiKey,
+      appSecret: creds.apiSecret,
+      accessToken: creds.accessToken,
+      accessSecret: creds.accessSecret
+    });
+    
+    // Post tweet to X (Twitter)
+    const response = await client.v2.tweet(tweets[tweetIndex].content);
+    
+    // Update the tweet in our local database
+    const updatedTweet = {
+      ...tweets[tweetIndex],
+      state: 'sent' as TweetState,
+      updatedAt: new Date().toISOString(),
+      xPostId: response.data.id
+    };
+    
+    tweets[tweetIndex] = updatedTweet;
+    await saveTweets(tweets);
+    
+    return updatedTweet;
+  } catch (error) {
+    console.error('Error sending tweet to X:', error);
+    throw error;
+  }
+};
+
+export const validateXCredentials = async (creds: XCredentialType): Promise<boolean> => {
+  try {
+    const client = new TwitterApi({
+      appKey: creds.apiKey,
+      appSecret: creds.apiSecret,
+      accessToken: creds.accessToken,
+      accessSecret: creds.accessSecret
+    });
+
+    await client.v2.me(); // lightweight credential check
+    return true;
+  } catch (error) {
+    console.error('Error validating X credentials:', error);
+    return false;
+  }
 };

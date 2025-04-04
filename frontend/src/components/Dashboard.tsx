@@ -64,7 +64,7 @@ const ErrorDisplay = styled.div`
 
 // Dashboard component
 const Dashboard = () => {
-  const { state, fetchTranscripts, setView, logout } = useAppContext();
+  const { state, fetchTranscripts, setView, exitApp } = useAppContext();
   
   // Fetch transcripts on mount
   useEffect(() => {
@@ -114,7 +114,7 @@ const Dashboard = () => {
   
   return (
     <Container>
-      <Header onLogout={logout} />
+      <Header onReset={exitApp} />
       <Content>{renderContent()}</Content>
     </Container>
   );

@@ -2,7 +2,7 @@
 import React from 'react';
 import { createGlobalStyle } from 'styled-components';
 import { AppProvider, useAppContext } from './context/AppContext';
-import LoginPage from './components/LoginPage';
+import EntryPage from './components/EntryPage';
 import Dashboard from './components/Dashboard';
 
 // Global styles
@@ -46,22 +46,24 @@ const GlobalStyle = createGlobalStyle`
   }
 `;
 
-// App container
+/**
+ * Main App Component - handles routing between login and dashboard
+ */
 const AppContent = () => {
+  // Get app state from context
   const { state } = useAppContext();
   
-  return (
-    <>
-      <GlobalStyle />
-      {state.isAuthenticated ? <Dashboard /> : <LoginPage />}
-    </>
-  );
+  // Show appropriate component based on auth state
+  return state.isAuthenticated ? <Dashboard /> : <EntryPage />;
 };
 
-// Main App component with context
+/**
+ * Root App component with context provider
+ */
 const App = () => {
   return (
     <AppProvider>
+      <GlobalStyle />
       <AppContent />
     </AppProvider>
   );

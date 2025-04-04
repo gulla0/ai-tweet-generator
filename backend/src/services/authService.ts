@@ -25,24 +25,13 @@ export const authenticate = (req: AuthRequest): AuthResponse => {
 };
 
 /**
- * Middleware to check if user is authenticated
+ * Middleware that allows all requests through
+ * For this open prototype, we don't require authentication
  */
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
-  // Get auth token from header
-  const authToken = req.headers['x-auth'] as string;
-  
-  // For this prototype, we just check for a specific token
-  // In production, you'd validate a JWT or other secure token
-  if (!authToken || authToken !== 'admin') {
-    res.status(401).json({
-      success: false,
-      message: 'Unauthorized'
-    });
-    return;
-  }
-  
-  // Add user info to request
-  req.user = { email: config.auth.adminEmail };
+  // No authentication required, simply proceed to route handler
+  // We still set a dummy user on the request for backward compatibility
+  req.user = { email: 'guest@example.com' };
   
   // Proceed to route handler
   next();

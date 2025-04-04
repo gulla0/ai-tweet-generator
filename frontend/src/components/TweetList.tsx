@@ -165,6 +165,28 @@ const DeleteButton = styled(ActionButton)`
   }
 `;
 
+const ViewOnXButton = styled(ActionButton)`
+  background-color: #1DA1F2;
+  color: white;
+  border: none;
+  
+  &:hover:not(:disabled) {
+    background-color: #0c85d0;
+  }
+`;
+
+const RealPostIndicator = styled.span`
+  display: inline-flex;
+  align-items: center;
+  background-color: #38a169;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-right: 0.5rem;
+`;
+
 const EmptyState = styled.div`
   background-color: white;
   border-radius: var(--radius);
@@ -373,6 +395,9 @@ const TweetList = () => {
                 <TweetState stateColor={stateColor}>
                   <StateIndicator stateColor={stateColor} />
                   {getStateName(tweet.state)}
+                  {tweet.state === 'sent' && tweet.xPostId && (
+                    <RealPostIndicator>Posted via X API</RealPostIndicator>
+                  )}
                 </TweetState>
                 
                 <TweetContent>{tweet.content}</TweetContent>
@@ -389,6 +414,17 @@ const TweetList = () => {
                     >
                       Send
                     </SendButton>
+                  )}
+                  
+                  {tweet.state === 'sent' && tweet.xPostId && (
+                    <ViewOnXButton
+                      as="a"
+                      href={`https://twitter.com/i/web/status/${tweet.xPostId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      🔗 View on X
+                    </ViewOnXButton>
                   )}
                   
                   {tweet.state !== 'sent' && (

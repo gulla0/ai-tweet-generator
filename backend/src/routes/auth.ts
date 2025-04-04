@@ -1,31 +1,45 @@
 // src/routes/auth.ts
 import express from 'express';
-import { authenticate } from '../services/authService';
-import { AuthRequest } from '../types';
+import { XCredentialType } from '../types';
+import { validateXCredentials } from '../services/tweetService';
 
 const router = express.Router();
 
 /**
- * POST /api/auth/login
- * Authenticate user with email and password
+ * POST /api/auth/validate-x-credentials
+ * Validate X credentials without requiring authentication
+ * Used for validating X API credentials
  */
-router.post('/login', (req, res) => {
+router.post('/validate-x-credentials', async (req, res) => {
   try {
-    const authResult = authenticate(req.body as AuthRequest);
+    const { apiKey, apiSecret, accessToken, accessSecret } = req.body as XCredentialType;
     
-    if (authResult.success) {
-      res.json(authResult);
-    } else {
-      res.status(401).json({
+    // Validate X credentials
+    if (!apiKey || !apiSecret || !accessToken || !accessSecret) {
+      return res.status(400).json({
         success: false,
-        message: authResult.message || 'Authentication failed'
+        isValid: false,
+        message: 'Missing X API credentials'
       });
     }
-  } catch (error) {
-    console.error('Login error:', error);
+    
+    const isValid = await validateXCredentials({
+      apiKey,
+      apiSecret,
+      accessToken,
+      accessSecret
+    });
+    
+    res.json({
+      success: true,
+      isValid
+    });
+  } catch (error: any) {
+    console.error('Error validating X credentials:', error);
     res.status(500).json({
       success: false,
-      message: 'Server error during authentication'
+      isValid: false,
+      message: error.message || 'Failed to validate X credentials'
     });
   }
 });

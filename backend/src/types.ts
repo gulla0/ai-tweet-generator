@@ -33,6 +33,14 @@ export interface AuthRequest {
   // Tweet state type
   export type TweetState = 'draft' | 'approved' | 'edited' | 'sent';
   
+  // X Credentials type
+  export interface XCredentialType {
+    apiKey: string;
+    apiSecret: string;
+    accessToken: string;
+    accessSecret: string;
+  }
+  
   // Tweet entity
   export interface Tweet {
     id: string;
@@ -42,6 +50,7 @@ export interface AuthRequest {
     state: TweetState;
     createdAt: string;
     updatedAt?: string;
+    xPostId?: string;
   }
   
   // Request for updating a tweet

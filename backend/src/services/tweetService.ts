@@ -39,13 +39,13 @@ export const getTweets = async (): Promise<Tweet[]> => {
   }
 };
 
-// Write tweets to file
+// Save tweets to file
 export const saveTweets = async (tweets: Tweet[]): Promise<void> => {
   try {
     await ensureDataDir();
     await fs.writeFile(TWEETS_FILE, JSON.stringify(tweets, null, 2));
   } catch (error) {
-    console.error(`Error writing tweets:`, error);
+    console.error(`Error saving tweets:`, error);
     throw new Error(`Failed to save tweets`);
   }
 };
@@ -71,7 +71,7 @@ export const updateTweetState = async (id: string, state: TweetState): Promise<T
     return null;
   }
   
-  // Update the tweet
+  // Update the tweet state
   const updatedTweet = {
     ...tweets[tweetIndex],
     state,
@@ -107,32 +107,6 @@ export const editTweet = async (id: string, data: TweetUpdateRequest): Promise<T
   return updatedTweet;
 };
 
-// Send a tweet (simulate sending to X)
-export const sendTweet = async (id: string): Promise<Tweet | null> => {
-  const tweets = await getTweets();
-  const tweetIndex = tweets.findIndex(tweet => tweet.id === id);
-  
-  if (tweetIndex === -1) {
-    return null;
-  }
-  
-  // In a real implementation, this would connect to X API
-  // For now, we'll just update the state
-  console.log(`Simulating sending tweet to X: ${tweets[tweetIndex].content}`);
-  
-  // Update the tweet state
-  const updatedTweet = {
-    ...tweets[tweetIndex],
-    state: 'sent' as TweetState,
-    updatedAt: new Date().toISOString()
-  };
-  
-  tweets[tweetIndex] = updatedTweet;
-  await saveTweets(tweets);
-  
-  return updatedTweet;
-};
-
 // Delete a tweet
 export const deleteTweet = async (id: string): Promise<boolean> => {
   const tweets = await getTweets();
@@ -148,6 +122,7 @@ export const deleteTweet = async (id: string): Promise<boolean> => {
   return true;
 };
 
+// Send tweet to X with provided credentials
 export const sendToX = async (id: string, creds: XCredentialType): Promise<Tweet | null> => {
   const tweets = await getTweets();
   const tweetIndex = tweets.findIndex(tweet => tweet.id === id);
@@ -186,6 +161,7 @@ export const sendToX = async (id: string, creds: XCredentialType): Promise<Tweet
   }
 };
 
+// Validate X credentials
 export const validateXCredentials = async (creds: XCredentialType): Promise<boolean> => {
   try {
     const client = new TwitterApi({

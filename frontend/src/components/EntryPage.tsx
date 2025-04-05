@@ -1,4 +1,4 @@
-// src/components/LoginPage.tsx
+// src/components/EntryPage.tsx
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useAppContext } from '../context/AppContext';

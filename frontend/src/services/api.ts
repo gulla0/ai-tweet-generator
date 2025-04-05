@@ -39,11 +39,6 @@ export const editTweet = async (id: string, update: TweetUpdateRequest) => {
   return response.data;
 };
 
-export const sendTweet = async (id: string) => {
-  const response = await api.post(`/tweets/${id}/send`);
-  return response.data;
-};
-
 export const deleteTweet = async (id: string) => {
   const response = await api.delete(`/tweets/${id}`);
   return response.data;

@@ -3,7 +3,6 @@ import express from 'express';
 import {
   getTweetById,
   editTweet,
-  sendTweet,
   deleteTweet,
   sendToX,
   validateXCredentials
@@ -47,44 +46,6 @@ router.put('/:id/edit', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Failed to edit tweet'
-    });
-  }
-});
-
-/**
- * POST /api/tweets/:id/send
- * Send a tweet to X (simulated)
- */
-router.post('/:id/send', async (req, res) => {
-  try {
-    const tweetId = req.params.id;
-    
-    const tweet = await getTweetById(tweetId);
-    if (!tweet) {
-      return res.status(404).json({
-        success: false,
-        message: 'Tweet not found'
-      });
-    }
-    
-    if (tweet.state === 'sent') {
-      return res.status(400).json({
-        success: false,
-        message: 'Tweet has already been sent'
-      });
-    }
-    
-    const sentTweet = await sendTweet(tweetId);
-    
-    res.json({
-      success: true,
-      tweet: sentTweet
-    });
-  } catch (error) {
-    console.error('Error sending tweet:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to send tweet'
     });
   }
 });
@@ -148,6 +109,21 @@ router.post('/send-to-x/:id', async (req, res) => {
       return res.status(400).json({
         success: false,
         message: 'Missing X API credentials'
+      });
+    }
+    
+    // Validate credentials first
+    const isValid = await validateXCredentials({
+      apiKey,
+      apiSecret,
+      accessToken,
+      accessSecret
+    });
+    
+    if (!isValid) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid X API credentials'
       });
     }
     

@@ -46,5 +46,54 @@
     "category": "Marketing",
     "content": "📈 Marketing plan in progress! Community members collaborating to create a comprehensive strategy for promoting Gimbal Labs' initiatives. Stay tuned! #DAOMarketing #CommunityDriven",
     "createdAt": "2025-03-26T03:13:34.085Z"
+  },
+  {
+    "id": "10920543-5bda-45df-b23a-e542baa1ebb5",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Project Updates",
+    "content": "***This is a test***\n🚀 Catalyst Fund 12 proposal officially closed out! Funds transferred to Gimbal Labs treasury. Milestone accomplished! \n\nhttps://projectcatalyst.io/funds/12/cardano-open-ecosystem/sustain-and-maintain-gimbalabs\n\n#DAOGovernance #Web3",
+    "state": "edited",
+    "createdAt": "2025-04-04T22:19:38.825Z",
+    "updatedAt": "2025-04-04T22:22:20.755Z"
+  },
+  {
+    "id": "933cb310-98a8-4c69-8772-1fc9a8c21173",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Development",
+    "content": "Exciting progress on Aeria frontend with T3 app framework and Mesh! Team in final stages of deployment. Stay tuned for updates! #CardanoDev #GimbalLabs",
+    "state": "draft",
+    "createdAt": "2025-04-04T22:19:38.825Z"
+  },
+  {
+    "id": "987bf6e5-d85c-4774-90c6-52d378b085ab",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Education",
+    "content": "Plutus PBL course update: 60+ lessons completed/amended, final 20% in QA stage. Amazing work by the education team! 📚 #Web3Learning #Cardano",
+    "state": "draft",
+    "createdAt": "2025-04-04T22:19:38.825Z"
+  },
+  {
+    "id": "330d3b63-bbf5-42a7-8e62-b5d4e40b836e",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Community",
+    "content": "New Andamio Marlo PBL instance launched! 23,000 ADA locked, collaborative course development begins. Open to developers & non-developers! #OpenEducation #Blockchain",
+    "state": "draft",
+    "createdAt": "2025-04-04T22:19:38.825Z"
+  },
+  {
+    "id": "1ccacaf8-42d7-4c39-84ce-c5eaecf6e35e",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Infrastructure",
+    "content": "Dandelion Light Node progress: Commissioned NFTs for first node operators, working towards completing Catalyst 13 milestone! 🌐 #DecentralizedNetwork",
+    "state": "draft",
+    "createdAt": "2025-04-04T22:19:38.825Z"
+  },
+  {
+    "id": "80e7555b-1b6b-4e47-9610-75770df079ed",
+    "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
+    "category": "Governance",
+    "content": "Community discussion on improving Discord: Exploring new organization strategies, integrations, and community participation channels. #CommunityGovernance #DAOLife",
+    "state": "draft",
+    "createdAt": "2025-04-04T22:19:38.825Z"
   }
 ]

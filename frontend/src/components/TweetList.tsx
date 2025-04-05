@@ -176,15 +176,70 @@ const ViewOnXButton = styled(ActionButton)`
 `;
 
 const RealPostIndicator = styled.span`
+  margin-left: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: normal;
+  background-color: rgba(49, 130, 206, 0.1);
+  color: var(--color-primary);
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+`;
+
+const CredentialWarning = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-error);
+  margin-top: 0.5rem;
+`;
+
+const WarningIcon = styled.span`
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: var(--color-error);
+  color: white;
+  text-align: center;
+  line-height: 16px;
+  font-weight: bold;
+`;
+
+const Icon = styled.span`
   display: inline-flex;
   align-items: center;
-  background-color: #38a169;
-  color: white;
-  padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+  justify-content: center;
   margin-right: 0.5rem;
+`;
+
+const Tooltip = styled.div`
+  position: relative;
+  display: inline-block;
+  
+  .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 5px;
+    border-radius: 6px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.75rem;
+    pointer-events: none;
+  }
+  
+  &:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -269,7 +324,7 @@ const ConfirmDeleteButton = styled(ActionButton)`
 // TweetList component
 const TweetList = () => {
   const { state, sendTweet, editTweet, deleteTweet } = useAppContext();
-  const { tweets, selectedTranscript } = state;
+  const { tweets, selectedTranscript, xCredentialsValid, xCredentials } = state;
   
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [editingTweet, setEditingTweet] = useState<Tweet | null>(null);
@@ -334,6 +389,21 @@ const TweetList = () => {
     setDeletingTweetId(null);
   };
   
+  // Check if valid X credentials are available
+  const canSendToX = xCredentials !== null && xCredentialsValid === true;
+  
+  // Get appropriate tooltip text based on credential status
+  const getCredentialTooltip = () => {
+    if (!xCredentials) {
+      return "You need to add X API credentials in settings to post tweets";
+    } else if (xCredentialsValid === false) {
+      return "Your X API credentials are invalid. Please update them in settings";
+    } else if (xCredentialsValid === null) {
+      return "Your X API credentials are being validated";
+    }
+    return "";
+  };
+  
   // Group tweets by category
   const groupTweetsByCategory = () => {
     const grouped: Record<string, Tweet[]> = {};
@@ -381,6 +451,13 @@ const TweetList = () => {
         <Subtitle>
           For: {selectedTranscript.title} ({selectedTranscript.date})
         </Subtitle>
+        
+        {!canSendToX && (
+          <CredentialWarning>
+            <WarningIcon>!</WarningIcon>
+            Valid X credentials required to post tweets. Check the status indicator in the header.
+          </CredentialWarning>
+        )}
       </HeaderSection>
       
       {categories.map(category => (
@@ -400,62 +477,66 @@ const TweetList = () => {
                   )}
                 </TweetState>
                 
+                {copiedId === tweet.id && (
+                  <CopyMessage>Copied!</CopyMessage>
+                )}
+                
                 <TweetContent>{tweet.content}</TweetContent>
                 
                 <ButtonGroup>
                   <ActionButton onClick={() => handleCopyTweet(tweet)}>
-                    Copy to Clipboard
+                    <Icon>
+                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                      </svg>
+                    </Icon>
+                    Copy
                   </ActionButton>
                   
                   {tweet.state !== 'sent' && (
-                    <SendButton
-                      onClick={() => handleSendTweet(tweet)}
-                      disabled={state.isLoading}
-                    >
-                      Send
-                    </SendButton>
-                  )}
-                  
-                  {tweet.state === 'sent' && tweet.xPostId && (
-                    <ViewOnXButton
-                      as="a"
-                      href={`https://twitter.com/i/web/status/${tweet.xPostId}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      🔗 View on X
-                    </ViewOnXButton>
-                  )}
-                  
-                  {tweet.state !== 'sent' && (
-                    <EditButton
-                      onClick={() => handleEditClick(tweet)}
-                      disabled={state.isLoading}
-                    >
-                      Edit
-                    </EditButton>
-                  )}
-                  
-                  {tweet.state !== 'sent' && (
-                    <DeleteButton
-                      onClick={() => handleDeleteClick(tweet.id)}
-                      disabled={state.isLoading}
-                    >
-                      Delete
-                    </DeleteButton>
+                    <>
+                      <Tooltip>
+                        <ActionButton 
+                          disabled={!canSendToX}
+                          onClick={() => handleSendTweet(tweet)}
+                          style={{ opacity: canSendToX ? 1 : 0.5 }}
+                        >
+                          <Icon>
+                            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </Icon>
+                          Send to X
+                        </ActionButton>
+                        {!canSendToX && <span className="tooltip-text">{getCredentialTooltip()}</span>}
+                      </Tooltip>
+
+                      <ActionButton onClick={() => handleEditClick(tweet)}>
+                        <Icon>
+                          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </Icon>
+                        Edit
+                      </ActionButton>
+                      
+                      <ActionButton onClick={() => handleDeleteClick(tweet.id)}>
+                        <Icon>
+                          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </Icon>
+                        Delete
+                      </ActionButton>
+                    </>
                   )}
                 </ButtonGroup>
-                
-                {copiedId === tweet.id && (
-                  <CopyMessage>Copied!</CopyMessage>
-                )}
               </TweetCard>
             );
           })}
         </CategorySection>
       ))}
       
-      {/* Edit Tweet Modal */}
       {editingTweet && (
         <TweetEditor
           tweet={editingTweet}
@@ -464,11 +545,10 @@ const TweetList = () => {
         />
       )}
       
-      {/* Confirm Delete Dialog */}
       {deletingTweetId && (
         <ConfirmDeleteOverlay>
           <ConfirmDeleteDialog>
-            <ConfirmDeleteTitle>Delete Tweet</ConfirmDeleteTitle>
+            <ConfirmDeleteTitle>Confirm Delete</ConfirmDeleteTitle>
             <ConfirmDeleteMessage>
               Are you sure you want to delete this tweet? This action cannot be undone.
             </ConfirmDeleteMessage>

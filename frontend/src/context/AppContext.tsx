@@ -251,25 +251,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     dispatch({ type: 'SET_ERROR', payload: null });
     
     try {
-      let response;
-      
-      // Only try to send to X if credentials are valid
-      if (state.xCredentials && state.xCredentialsValid) {
-        try {
-          response = await api.sendTweetToX(tweetId, state.xCredentials);
-        } catch (error) {
-          console.error('Error sending to X, falling back to simulation:', error);
-          // If X sending fails for any reason, fall back to simulation
-          response = await api.sendTweet(tweetId);
-        }
-      } else {
-        // No valid credentials, just simulate
-        response = await api.sendTweet(tweetId);
+      // Check if we have valid X credentials before attempting to send
+      if (!state.xCredentials || !state.xCredentialsValid) {
+        const errorMessage = !state.xCredentials 
+          ? 'X credentials are required to post tweets. Please add them in settings.'
+          : 'Your X credentials are invalid. Please update them in settings.';
+        
+        dispatch({ type: 'SET_ERROR', payload: errorMessage });
+        throw new Error(errorMessage);
       }
       
+      // We have valid credentials, attempt to post to X
+      const response = await api.sendTweetToX(tweetId, state.xCredentials);
       dispatch({ type: 'UPDATE_TWEET', payload: response.tweet });
     } catch (error: any) {
-      dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to send tweet' });
+      // Provide specific error messaging based on the type of error
+      let errorMessage = error.message || 'Failed to send tweet';
+      
+      // If it's a 401 error, it's likely an auth issue with X
+      if (error.status === 401) {
+        errorMessage = 'Your X credentials are no longer valid. Please update them in settings.';
+        // Also mark credentials as invalid
+        dispatch({ type: 'SET_X_CREDENTIALS_VALID', payload: false });
+      }
+      
+      dispatch({ type: 'SET_ERROR', payload: errorMessage });
       throw error;
     } finally {
       dispatch({ type: 'SET_LOADING', payload: false });

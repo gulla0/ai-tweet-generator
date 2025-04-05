@@ -210,7 +210,8 @@ export const XCredentialModal: React.FC<XCredentialModalProps> = ({ isOpen, onCl
           
           <StatusNote>
             The color indicator in the header will show green if your credentials are valid, 
-            or red if they're invalid. Invalid credentials will fall back to simulating tweets.
+            or red if they're invalid. <strong>Valid X credentials are now required to post tweets.
+            You will not be able to send tweets without providing valid credentials.</strong>
           </StatusNote>
           
           <ButtonGroup>

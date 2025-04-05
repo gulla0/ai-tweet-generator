@@ -1,10 +1,10 @@
-# DAO Tweet Generator
+# AI Tweet Generator
 
-A minimal, modular application for converting DAO governance meeting transcripts into engaging tweet suggestions using Anthropic's Claude API.
+A minimal, modular application for converting meeting transcripts into engaging tweet suggestions and posting them directly to X (formerly Twitter) using Anthropic's Claude API.
 
 ## Overview
 
-The DAO Tweet Generator helps decentralized organizations communicate their governance activities to a wider audience. It automatically processes meeting transcripts and generates tweet-worthy content organized by categories like governance updates, treasury news, community initiatives, and more.
+The AI Tweet Generator helps organizations communicate their governance activities to a wider audience. It automatically processes meeting transcripts and generates tweet-worthy content organized by categories like governance updates, treasury news, community initiatives, and more.
 
 ## Philosophy
 
@@ -22,9 +22,10 @@ This application is built with these principles in mind:
 - Review generated tweets by category
 - Complete tweet lifecycle management:
   - Edit tweet content
-  - Send tweets (simulated)
+  - Send tweets directly to X (Twitter) or simulate sending
   - Delete draft tweets
   - Visual state indicators (draft, approved, edited, sent)
+- X (Twitter) API integration with credential validation
 - Simple local storage without requiring a database
 - Basic authentication with configurable admin credentials
 - Modern, responsive UI with copy-to-clipboard functionality for tweets
@@ -32,14 +33,14 @@ This application is built with these principles in mind:
 ## Project Structure
 
 ```
-dao-tweet-generator/
+ai-tweet-generator/
 ├── backend/
 │   ├── src/
 │   │   ├── config/         # Configuration and environment settings
 │   │   ├── services/       # Core business logic
 │   │   │   ├── authService.ts       # Authentication service
 │   │   │   ├── transcriptService.ts # Transcript processing
-│   │   │   └── tweetService.ts      # Tweet management
+│   │   │   └── tweetService.ts      # Tweet management with X API integration
 │   │   ├── routes/         # API endpoints
 │   │   │   ├── auth.ts            # Authentication routes
 │   │   │   ├── transcripts.ts     # Transcript management routes
@@ -52,10 +53,12 @@ dao-tweet-generator/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/     # UI components
-│   │   │   ├── Dashboard.tsx       # Main dashboard
-│   │   │   ├── TweetList.tsx       # Tweet display component
-│   │   │   ├── TweetEditor.tsx     # Tweet editing modal
-│   │   │   └── ...                 # Other components
+│   │   │   ├── Dashboard.tsx         # Main dashboard
+│   │   │   ├── TweetList.tsx         # Tweet display component
+│   │   │   ├── TweetEditor.tsx       # Tweet editing modal
+│   │   │   ├── XCredentialModal.tsx  # X API credential management
+│   │   │   ├── XCredentialStatus.tsx # X credential validation status
+│   │   │   └── ...                   # Other components
 │   │   ├── context/        # State management
 │   │   │   └── AppContext.tsx      # Application state and actions
 │   │   ├── services/       # API client
@@ -66,6 +69,7 @@ dao-tweet-generator/
 │   ├── package.json
 │   └── tsconfig.json
 ├── sample-transcript.txt   # Example meeting transcript
+├── access-token-guide.md   # Guide for setting up X API credentials
 └── README.md
 ```
 
@@ -73,13 +77,39 @@ dao-tweet-generator/
 
 - Node.js (v16 or higher)
 - Anthropic API key (Claude 3 Sonnet or higher)
+- X (Twitter) API credentials (for posting tweets to X)
+
+## Setting up X (Twitter) API Credentials
+
+To post tweets directly to X (formerly Twitter), you'll need to set up an X app with OAuth 1.0a credentials. Follow these steps:
+
+1. **Create a New App**
+   - Go to [developer.twitter.com](https://developer.twitter.com/) and log in
+   - Create a new project and then a new app
+   - Copy the **API Key** and **API Key Secret**
+
+2. **Set App Permissions**
+   - In the app settings, go to **User authentication settings**
+   - Set the following:
+     - **App permissions:** `Read and write`
+     - **Type of App:** `Web App, Automated App or Bot`
+     - **Callback URI / Redirect URL:** `http://127.0.0.1:3000/callback`
+     - **Website URL:** `https://example.com`
+   - Save the settings
+
+3. **Generate Access Token and Access Token Secret**
+   - Go to the **Keys and Tokens** section of your app
+   - Under **Access Token and Secret**, click **Generate**
+   - Copy your **Access Token** and **Access Token Secret**
+
+For more detailed instructions, see the `access-token-guide.md` file.
 
 ## Setup
 
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd dao-tweet-generator
+   cd ai-tweet-generator
    ```
 
 2. Set up the backend:
@@ -151,13 +181,18 @@ dao-tweet-generator/
 8. For each tweet, you can:
    - **Copy to Clipboard**: Quickly copy the tweet text
    - **Edit**: Modify the tweet content (opens the editor)
-   - **Send**: Mark the tweet as sent (simulated)
+   - **Send**: Send the tweet to X or mark as sent (based on X credential status)
    - **Delete**: Remove draft tweets from the list
 
 9. Tweet states are color-coded for easy identification:
    - **Draft**: Default state for newly generated tweets
    - **Edited**: Tweets that have been modified
-   - **Sent**: Tweets that have been marked as sent
+   - **Sent**: Tweets that have been marked as sent or actually posted to X
+
+10. To set up X credentials for posting real tweets:
+    - Click on the X icon in the header
+    - Enter your API Key, API Secret, Access Token, and Access Token Secret
+    - The status indicator will show green if your credentials are valid
 
 ## Understanding The Architecture
 
@@ -165,7 +200,7 @@ This application follows a clean architecture approach:
 
 ### Backend
 - **Config Layer**: Environment variables and application settings
-- **Services Layer**: Core business logic for transcript processing and tweet generation 
+- **Services Layer**: Core business logic for transcript processing, tweet generation, and X integration
 - **Routes Layer**: API endpoints for the frontend to interact with
 - **Data Storage**: Simple file-based storage using JSON files
 
@@ -182,7 +217,8 @@ This application follows a clean architecture approach:
 4. Generated tweets are stored in the local file system
 5. Frontend fetches and displays the generated tweets
 6. User can edit, send, or delete tweets as needed
-7. State changes are persisted to the backend
+7. If X credentials are valid, tweets can be posted directly to X
+8. State changes are persisted to the backend
 
 ## Customizing the Tweet Generation
 

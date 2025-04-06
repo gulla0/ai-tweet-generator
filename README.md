@@ -154,9 +154,15 @@ For more detailed instructions, see the `access-token-guide.md` file.
 
 3. Access the application at http://localhost:3000
 
-4. Log in with the admin credentials:
-   - Email: `admin@example.com` (or as configured in your .env)
-   - Password: `admin123` (or as configured in your .env)
+4. On the entry page:
+   - **X (Twitter) API Credentials** (all optional):
+     - API Key
+     - API Secret
+     - Access Token
+     - Access Token Secret
+   - You can click "Test Credentials" to verify your X credentials before entering
+   - Or simply click "Skip and enter without X credentials" to use the app in simulation mode
+   - Without valid X credentials, tweets will be simulated instead of actually posted to X
 
 ## Usage
 

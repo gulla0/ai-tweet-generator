@@ -44,8 +44,11 @@
     "id": "dbfcb75f-efd9-44b7-85f0-5058fa0abe9f",
     "transcriptId": "aa387a48-343a-44d5-b67c-c72fb57eb4c9",
     "category": "Marketing",
-    "content": "📈 Marketing plan in progress! Community members collaborating to create a comprehensive strategy for promoting Gimbal Labs' initiatives. Stay tuned! #DAOMarketing #CommunityDriven",
-    "createdAt": "2025-03-26T03:13:34.085Z"
+    "content": "**This is a test**\n📈 Marketing plan in progress! Community members collaborating to create a comprehensive strategy for promoting Gimbalabs' initiatives. Stay tuned! #DAOMarketing #CommunityDriven #Gimbalabs",
+    "createdAt": "2025-03-26T03:13:34.085Z",
+    "state": "sent",
+    "updatedAt": "2025-04-05T23:30:37.416Z",
+    "xPostId": "1908663596805939562"
   },
   {
     "id": "10920543-5bda-45df-b23a-e542baa1ebb5",
@@ -71,9 +74,11 @@
     "id": "987bf6e5-d85c-4774-90c6-52d378b085ab",
     "transcriptId": "d59a412d-83c0-4983-be83-c010e08d37ca",
     "category": "Education",
-    "content": "Plutus PBL course update: 60+ lessons completed/amended, final 20% in QA stage. Amazing work by the education team! 📚 #Web3Learning #Cardano",
-    "state": "draft",
-    "createdAt": "2025-04-04T22:19:38.825Z"
+    "content": "**This is a test**\nPlutus PBL course update: 60+ lessons completed/amended, final 20% in QA stage. Amazing work by the education team! 📚 #Web3Learning #Cardano #Gimbalabs",
+    "state": "sent",
+    "createdAt": "2025-04-04T22:19:38.825Z",
+    "updatedAt": "2025-04-05T22:44:38.035Z",
+    "xPostId": "1908652022506676425"
   },
   {
     "id": "330d3b63-bbf5-42a7-8e62-b5d4e40b836e",
@@ -98,5 +103,55 @@
     "content": "Community discussion on improving Discord: Exploring new organization strategies, integrations, and community participation channels. #CommunityGovernance #DAOLife",
     "state": "draft",
     "createdAt": "2025-04-04T22:19:38.825Z"
+  },
+  {
+    "id": "bddaf638-2803-4e10-abe0-6ef374cc3f6e",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Governance",
+    "content": "🕰️ Reminder: This month marks the annual clock change! Our #DAOgovernance meetings remain pegged to UTC time, so adjust your local calendars accordingly. #Web3 #Blockchain",
+    "state": "draft",
+    "createdAt": "2025-04-05T23:35:18.078Z"
+  },
+  {
+    "id": "b47b4e12-5cd7-4fcc-92a0-16f4a63ef2b9",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Community",
+    "content": "Exciting update: We're exploring a separate marketing proposal to amplify #GimbalLabs' reach and community engagement! Calling all creative minds to help drive our visibility. #Web3Community",
+    "state": "draft",
+    "createdAt": "2025-04-05T23:35:18.078Z"
+  },
+  {
+    "id": "58771eab-a15c-49f8-918a-7d2b3711d68d",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Development",
+    "content": "Open Spaces continues to evolve! We're maintaining our commitment to consistent weekly meetings, learning, and collaborative exploration. Stay tuned for our latest initiatives! #BlockchainDevelopment #OpenSource",
+    "state": "draft",
+    "createdAt": "2025-04-05T23:35:18.078Z"
+  },
+  {
+    "id": "39fde883-f647-419e-9d3c-cc5c088dedac",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Treasury",
+    "content": "Important discussion on potential tax rate reduction from 20% to 10%. Community deliberation ongoing - every voice matters in our decentralized decision-making process! #DAOGovernance #Cardano",
+    "state": "draft",
+    "createdAt": "2025-04-05T23:35:18.078Z"
+  },
+  {
+    "id": "8a616bc9-e387-48d0-a9f3-e3e0b5408a1d",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Education",
+    "content": "We're documenting our facilitation journey and learning experiences. Our goal: Create replicable, safe spaces for learning and empowering individuals and organizations in the #Web3 ecosystem. #CommunityLearning #Gimbalabs",
+    "state": "sent",
+    "createdAt": "2025-04-05T23:35:18.078Z",
+    "updatedAt": "2025-04-05T23:38:01.606Z",
+    "xPostId": "1908665459630649620"
+  },
+  {
+    "id": "ba020c0d-411c-4373-9f2f-1829dbfcace0",
+    "transcriptId": "7a137fef-7575-4c4e-bfdb-02d2334e7ec8",
+    "category": "Projects",
+    "content": "New proposal in progress: Witch Spaces (Jan-June 2025) focusing on maintaining consistent community spaces, facilitator compensation, and continuous improvement. #BlockchainCommunity #DAOProposal",
+    "state": "draft",
+    "createdAt": "2025-04-05T23:35:18.078Z"
   }
 ]

@@ -135,8 +135,7 @@ For more detailed instructions, see the `access-token-guide.md` file.
    PORT=4000
    ANTHROPIC_API_KEY=your_anthropic_api_key_here
    MODEL=claude-3-sonnet-20240229
-   ADMIN_EMAIL=admin@example.com
-   ADMIN_PASSWORD=admin123
+   CORS_ORIGIN=http://localhost:3000
    ```
 
 ## Running the Application

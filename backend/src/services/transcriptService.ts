@@ -124,7 +124,7 @@ export const generateTweets = async (transcript: string, transcriptId: string): 
 Your task is to analyze the provided meeting transcript and generate tweet suggestions for the DAO to share with the community.
 Focus on key governance updates, community initiatives, and collaborative projects discussed in the meeting.
 
-Create 6-10 tweet-worthy segments from the transcript and convert them into engaging, informative tweets.
+Create 10-15 tweet-worthy segments from the transcript and convert them into engaging, informative tweets.
 Each tweet should:
 - Be 280 characters or less
 - Be written in a professional but conversational tone

@@ -30,15 +30,11 @@
     "id": "c01245f9-d402-40bf-a169-5d944c5496e0",
     "transcriptId": "aa387a48-343a-44d5-b67c-c72fb57eb4c9",
     "category": "Strategy",
-    "content": "💡 We're expanding our approach to funding: From Catalyst grants to potential direct developer donations, Gimbal Labs is exploring multiple revenue streams. #DAOStrategy #Decentralization",
-    "createdAt": "2025-03-26T03:13:34.085Z"
-  },
-  {
-    "id": "dff80c9e-e04a-440b-92e9-1fa7b28d36e7",
-    "transcriptId": "aa387a48-343a-44d5-b67c-c72fb57eb4c9",
-    "category": "Development",
-    "content": "🔧 Launching our first experimental developer support circle focusing on front-end development. Goal: Build capacity and provide value to Cardano projects. #BlockchainDevelopment #Collaboration",
-    "createdAt": "2025-03-26T03:13:34.085Z"
+    "content": "**this is a test**\n💡 We're expanding our approach to funding: From Catalyst grants to potential direct developer donations, Gimbalabs is exploring multiple revenue streams. #DAOStrategy #Decentralization #Gimbalabs",
+    "createdAt": "2025-03-26T03:13:34.085Z",
+    "state": "sent",
+    "updatedAt": "2025-04-07T15:37:04.831Z",
+    "xPostId": "1909269201367237109"
   },
   {
     "id": "dbfcb75f-efd9-44b7-85f0-5058fa0abe9f",
